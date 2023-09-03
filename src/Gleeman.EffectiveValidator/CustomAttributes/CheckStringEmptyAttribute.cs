@@ -1,6 +1,4 @@
-﻿using Gleeman.EffectiveValidator.CustomAttributes.Abstract;
-
-namespace Gleeman.EffectiveValidator.CustomAttributes;
+﻿namespace Gleeman.EffectiveValidator.CustomAttributes;
 
 public class CheckStringEmptyAttribute : AbstractAttribute<CheckStringEmptyAttribute>
 {

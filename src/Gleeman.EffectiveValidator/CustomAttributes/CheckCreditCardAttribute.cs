@@ -1,7 +1,4 @@
-﻿using Gleeman.EffectiveValidator.CustomAttributes.Abstract;
-using Gleeman.EffectiveValidator.Enums;
-
-namespace Gleeman.EffectiveValidator.CustomAttributes;
+﻿namespace Gleeman.EffectiveValidator.CustomAttributes;
 
 public class CheckCreditCardAttribute : AbstractAttribute<CheckCreditCardAttribute>
 {
