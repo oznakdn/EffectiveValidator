@@ -53,6 +53,7 @@ if (validationResult.IsValid)
      dbContext.SaveChanges();
      return Created("", createPerson);
 }
+return BadRequest(validationResult.ErrorMessages);
 
 
 ```
