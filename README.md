@@ -1,4 +1,4 @@
-# EffectiveValidator
+# Gleeman Effective Validator
 ### How To Use?
 ```csharp
 
