@@ -4,6 +4,54 @@
 [![Nuget downloads](https://img.shields.io/nuget/dt/JwtProducer?logo=nuget)](https://www.nuget.org/packages/JwtProducer/)
 ![Build & Test Main](https://github.com/Blazored/LocalStorage/workflows/Build%20&%20Test%20Main/badge.svg)
 
+
+### Validation Attributes
+
+##### Credit Card Validation
+```csharp
+[CheckCreditCard(CreditCardType creditCard, string errorMessage)]
+```
+##### Date Validation
+```csharp
+[CheckDate(string startDate, string endDate, string errorMessage)]
+```
+##### Email Validation
+```csharp
+ [CheckEmail(string errorMessage)]
+```
+##### Name Validation
+```csharp
+  [CheckName(string errorMessage)]
+```
+##### Passport Validation
+```csharp
+   [CheckPassport(string errorMessage)]
+```
+##### Phone Validation
+```csharp
+    [CheckPhone(string errorMessage)]
+```
+##### Number Range Validation
+```csharp
+     [CheckRange(int min, int max, string errorMessage)]
+```
+##### Required Validation
+```csharp
+    [CheckRequired(string errorMessage)]
+```
+##### String Empty Validation
+```csharp
+     [CheckStringEmpty(string errorMessage)]
+```
+##### String Lenght Validation
+```csharp
+     [CheckStringLenght(int minLenght, int maxLenght, string errorMessage)]
+```
+##### Zip Code Validation
+```csharp
+     [CheckZipCode(string errorMessage)]
+```
+
 ### How To Use?
 ```csharp
 
