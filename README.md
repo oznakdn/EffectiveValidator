@@ -1,7 +1,7 @@
 # Gleeman Effective Validator
 
-[![Nuget version](https://img.shields.io/nuget/v/JwtProducer.svg?logo=nuget)](https://www.nuget.org/packages/JwtProducer/)
-[![Nuget downloads](https://img.shields.io/nuget/dt/JwtProducer?logo=nuget)](https://www.nuget.org/packages/JwtProducer/)
+[![Nuget version](https://img.shields.io/nuget/v/Gleeman.EffectiveValidator.svg?logo=nuget)](https://www.nuget.org/packages/Gleeman.EffectiveValidator/)
+[![Nuget downloads](https://img.shields.io/nuget/dt/Gleeman.EffectiveValidator?logo=nuget)](https://www.nuget.org/packages/Gleeman.EffectiveValidator/)
 ![Build & Test Main](https://github.com/Blazored/LocalStorage/workflows/Build%20&%20Test%20Main/badge.svg)
 
 
