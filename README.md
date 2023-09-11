@@ -92,16 +92,33 @@ public record CreatePersonDto
 
 ```
 ```csharp
-var validator = new EffectiveValidator<CreatePersonDto>();
-var validationResult = validator.Validate(createPerson);
-if (validationResult.IsValid)
- {
-     using var dbContext = new AppDbContext();
-     dbContext.Persons.Add(person);
-     dbContext.SaveChanges();
-     return Created("", createPerson);
-}
-return BadRequest(validationResult.ErrorMessages);
+        [HttpPost]
+        public IActionResult PostPerson(CreatePersonDto createPerson)
+        {
+            Person person = new()
+            {
+                FirstName = createPerson.FirstName,
+                LastName = createPerson.LastName,
+                DateOfBirth = createPerson.DateOfBirth,
+                Age = createPerson.Age,
+                Email = createPerson.Email,
+                PhoneNumber = createPerson.PhoneNumber,
+                CreditCartNumber = createPerson.CreditCartNumber,
+                PassportNumber = createPerson.PassportNumber,
+                ZipCode = createPerson.ZipCode,
+                IsActive = createPerson.IsActive
+            };
 
+            var validator = new EffectiveValidator<CreatePersonDto>();
+            var validationResult = validator.Validate(createPerson);
+            if (validationResult.IsValid)
+            {
+                using var dbContext = new AppDbContext();
+                dbContext.Persons.Add(person);
+                dbContext.SaveChanges();
+                return Created("", createPerson);
+            }
 
+            return BadRequest(validationResult.ErrorMessages);
+        }
 ```
