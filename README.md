@@ -1,9 +1,14 @@
 # Gleeman Effective Validator
 
-[![Nuget version](https://img.shields.io/nuget/v/Gleeman.EffectiveValidator.svg?logo=nuget)](https://www.nuget.org/packages/Gleeman.EffectiveValidator/)
-[![Nuget downloads](https://img.shields.io/nuget/dt/Gleeman.EffectiveValidator?logo=nuget)](https://www.nuget.org/packages/Gleeman.EffectiveValidator/)
-![Build & Test Main](https://github.com/Blazored/LocalStorage/workflows/Build%20&%20Test%20Main/badge.svg)
+| Package |  Version | Popularity |
+| ------- | ----- | ----- |
+| `Gleeman.EffectiveValidator` | [![NuGet](https://img.shields.io/nuget/v/Gleeman.EffectiveValidator.svg)](https://www.nuget.org/packages/Gleeman.EffectiveValidator) | [![Nuget](https://img.shields.io/nuget/dt/Gleeman.EffectiveValidator.svg)](https://www.nuget.org/packages/Gleeman.EffectiveValidator)
+<br>
 
+`dotnet` CLI
+```
+> dotnet add package Gleeman.EffectiveValidator --version 1.0.0
+```
 
 ### Validation Attributes
 
