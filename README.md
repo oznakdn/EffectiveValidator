@@ -7,54 +7,54 @@
 
 `dotnet` CLI
 ```
-> dotnet add package Gleeman.EffectiveValidator --version 1.0.0
+> dotnet add package Gleeman.EffectiveValidator --version 2.0.0
 ```
 
 ### Validation Attributes
 
 ##### Credit Card Validation
 ```csharp
-[CheckCreditCard(CreditCardType creditCard, string errorMessage)]
+[CheckCreditCard(CreditCardType creditCard)]
 ```
 ##### Date Validation
 ```csharp
-[CheckDate(string startDate, string endDate, string errorMessage)]
+[CheckDate(string startDate, string endDate)]
 ```
 ##### Email Validation
 ```csharp
- [CheckEmail(string errorMessage)]
+ [CheckEmail]
 ```
 ##### Name Validation
 ```csharp
-  [CheckName(string errorMessage)]
+  [CheckName]
 ```
 ##### Passport Validation
 ```csharp
-   [CheckPassport(string errorMessage)]
+   [CheckPassport]
 ```
 ##### Phone Validation
 ```csharp
-    [CheckPhone(string errorMessage)]
+    [CheckPhone]
 ```
 ##### Number Range Validation
 ```csharp
-     [CheckRange(int min, int max, string errorMessage)]
+     [CheckRange(int min, int max)]
 ```
 ##### Required Validation
 ```csharp
-    [CheckRequired(string errorMessage)]
+    [CheckRequired]
 ```
 ##### String Empty Validation
 ```csharp
-     [CheckStringEmpty(string errorMessage)]
+     [CheckStringEmpty]
 ```
 ##### String Lenght Validation
 ```csharp
-     [CheckStringLenght(int minLenght, int maxLenght, string errorMessage)]
+     [CheckStringLenght(int minLenght, int maxLenght)]
 ```
 ##### Zip Code Validation
 ```csharp
-     [CheckZipCode(string errorMessage)]
+     [CheckZipCode]
 ```
 
 ### How To Use?
