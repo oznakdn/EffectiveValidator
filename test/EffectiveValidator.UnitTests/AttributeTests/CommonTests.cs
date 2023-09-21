@@ -38,6 +38,14 @@ public class CommonTests
 
     }
 
+    class Test2
+    {
+        [CheckName]
+        public string name;
+        [CheckEmail]
+        public string email;
+    }
+
     [Fact]
     void AllAttributes_When_Not_Valid_ShouldBe_Return_False_And_Not_Null_ErrorMessages()
     {
@@ -56,11 +64,30 @@ public class CommonTests
 
         };
 
+
         var validator = new EffectiveValidator<Test>();
         var validationResult = validator.Validate(test);
         Assert.False(validationResult.IsValid);
         Assert.NotNull(validationResult.ErrorMessages);
         Assert.Equal<int>(11, validationResult.ErrorMessages.Count);
+
+    }
+
+    [Fact]
+    void AllAttributes_Field_When_Not_Valid_ShouldBe_Return_False_And_Not_Null_ErrorMessages()
+    {
+        
+        Test2 test = new()
+        {
+            name = "ads.4252",
+            email = "mail.com"
+        };
+
+
+        var validator = new EffectiveValidator<Test2>();
+        var validationResult = validator.Validate(test);
+        Assert.False(validationResult.IsValid);
+        Assert.NotNull(validationResult.ErrorMessages);
     }
 
     [Fact]
@@ -82,6 +109,22 @@ public class CommonTests
         };
 
         var validator = new EffectiveValidator<Test>();
+        var validationResult = validator.Validate(test);
+        Assert.Null(validationResult.ErrorMessages);
+        Assert.True(validationResult.IsValid);
+    }
+
+    [Fact]
+    void AllAttributes_Field_When_Valid_ShouldBe_Return_True_And_Null_ErrorMessages()
+    {
+
+        Test2 test = new()
+        {
+            name = "John",
+            email = "john@mail.com"
+        };
+
+        var validator = new EffectiveValidator<Test2>();
         var validationResult = validator.Validate(test);
         Assert.Null(validationResult.ErrorMessages);
         Assert.True(validationResult.IsValid);

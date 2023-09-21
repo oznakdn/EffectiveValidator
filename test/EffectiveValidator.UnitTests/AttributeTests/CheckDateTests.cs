@@ -4,7 +4,7 @@ public class CheckDateTests
 {
     class Test
     {
-        [CheckDate("1900,1,1", "2005,1,1", "is invalid!")]
+        [CheckDate("1900,1,1", "2005,1,1")]
         public DateTime DateOfBirth { get; set; }
     }
 
@@ -20,7 +20,7 @@ public class CheckDateTests
         var validationResult = validator.Validate(test);
         Assert.False(validationResult.IsValid);
         Assert.NotNull(validationResult.ErrorMessages);
-        Assert.Equal<string>("DateOfBirth is invalid!", validationResult.ErrorMessages[0]);
+        Assert.Equal<string>("DateOfBirth should be equal or greater than 1900,1,1!", validationResult.ErrorMessages[0]);
     }
 
     [Fact]
