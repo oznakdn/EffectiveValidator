@@ -1,9 +1,10 @@
 ﻿namespace Gleeman.EffectiveValidator.Validation;
 
-public sealed class EffectiveValidator<T> where T: class
+public sealed class EffectiveValidator<T> where T : class
 {
     private Type _type { get; }
     private PropertyInfo[] _properties { get; }
+    private FieldInfo[] _fields { get; }
     private List<string> _errors { get; }
 
     public EffectiveValidator()
@@ -11,6 +12,7 @@ public sealed class EffectiveValidator<T> where T: class
         _type = typeof(T);
         _errors = new();
         _properties = _type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        _fields = _type.GetFields(BindingFlags.Public | BindingFlags.Instance);
     }
 
     public IValidationResult Validate(T item)
@@ -22,55 +24,115 @@ public sealed class EffectiveValidator<T> where T: class
             {
                 if (property.GetCustomAttribute<CheckRequiredAttribute>() != null)
                 {
-                    CheckRequired(property, item);
+                    CheckRequiredProperty(property, item);
                 }
                 if (property.PropertyType == typeof(string))
                 {
                     if (property.GetCustomAttribute<CheckStringLenghtAttribute>() != null)
                     {
-                        CheckStringLenght(property, item);
+                        CheckStringLenghtProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckStringEmptyAttribute>() != null)
                     {
-                        CheckStringEmpty(property, item);
+                        CheckStringEmptyProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckNameAttribute>() != null)
                     {
-                        CheckName(property, item);
+                        CheckNameProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckEmailAttribute>() != null)
                     {
-                        CheckEmail(property, item);
+                        CheckEmailProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckPhoneAttribute>() != null)
                     {
-                        CheckPhoneNumber(property, item);
+                        CheckPhoneNumberProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckZipCodeAttribute>() != null)
                     {
-                        CheckZipCode(property, item);
+                        CheckZipCodeProperty(property, item);
                     }
                     if (property.GetCustomAttribute<CheckCreditCardAttribute>() != null)
                     {
-                        CheckCreditCard(property, item);
+                        CheckCreditCardField(property, item);
                     }
                     if (property.GetCustomAttribute<CheckPassportAttribute>() != null)
                     {
-                        CheckPassportNumber(property, item);
+                        CheckPassportNumberProperty(property, item);
                     }
                 }
                 if (property.PropertyType == typeof(int))
                 {
                     if (property.GetCustomAttribute<CheckRangeAttribute>() != null)
                     {
-                        CheckRange(property, item);
+                        CheckRangeProperty(property, item);
                     }
                 }
                 if (property.PropertyType == typeof(DateTime))
                 {
                     if (property.GetCustomAttribute<CheckDateAttribute>() != null)
                     {
-                        CheckDate(property, item);
+                        CheckDateProperty(property, item);
+                    }
+                }
+            }
+        }
+
+        foreach (FieldInfo field in _fields)
+        {
+            if (field.CustomAttributes != null)
+            {
+                if (field.GetCustomAttribute<CheckRequiredAttribute>() != null)
+                {
+                    CheckRequiredField(field, item);
+                }
+                if (field.FieldType == typeof(string))
+                {
+                    if (field.GetCustomAttribute<CheckStringLenghtAttribute>() != null)
+                    {
+                        CheckStringLenghtField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckStringEmptyAttribute>() != null)
+                    {
+                        CheckStringEmptyField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckNameAttribute>() != null)
+                    {
+                        CheckNameField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckEmailAttribute>() != null)
+                    {
+                        CheckEmailField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckPhoneAttribute>() != null)
+                    {
+                        CheckPhoneNumberField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckZipCodeAttribute>() != null)
+                    {
+                        CheckZipCodeField(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckCreditCardAttribute>() != null)
+                    {
+                        CheckCreditCardProperty(field, item);
+                    }
+                    if (field.GetCustomAttribute<CheckPassportAttribute>() != null)
+                    {
+                        CheckPassportNumberField(field, item);
+                    }
+                }
+                if (field.FieldType == typeof(int))
+                {
+                    if (field.GetCustomAttribute<CheckRangeAttribute>() != null)
+                    {
+                        CheckRangeField(field, item);
+                    }
+                }
+                if (field.FieldType == typeof(DateTime))
+                {
+                    if (field.GetCustomAttribute<CheckDateAttribute>() != null)
+                    {
+                        CheckDateField(field, item);
                     }
                 }
             }
@@ -80,188 +142,621 @@ public sealed class EffectiveValidator<T> where T: class
         return new ValidationResult(null, true);
     }
 
-    void CheckRequired(PropertyInfo property, T item)
-    {
-        var attribute = property.GetCustomAttribute<CheckRequiredAttribute>();
+    #region CheckRequired
 
-        if (attribute != null)
+    void CheckRequiredProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckRequiredAttribute>();
+
+        if (property != null)
         {
-            if (property.GetValue(item) == null)
+            if (propertyInfo.GetValue(item) == null)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} should not be null or empty!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckStringLenght(PropertyInfo property, T item)
+    void CheckRequiredField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckStringLenghtAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckRequiredAttribute>();
 
-        if (attribute != null)
+        if (field != null)
         {
-            if (attribute.MinLenght > property.GetValue(item).ToString().Length)
+            if (fieldInfo.GetValue(item) == null)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} should not be null or empty!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
             }
-            if (attribute.MaxLenght < property.GetValue(item).ToString().Length)
+        }
+    }
+
+
+    #endregion
+
+    #region CheckStringLenght
+
+    void CheckStringLenghtProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckStringLenghtAttribute>();
+
+        if (property != null)
+        {
+            if (property.MinLenght > propertyInfo.GetValue(item).ToString().Length)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} lenght should be equal or greater then{property.MinLenght}");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
+            }
+            if (property.MaxLenght < propertyInfo.GetValue(item).ToString().Length)
+            {
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} lenght should be equal or less then{property.MaxLenght}");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    void CheckStringLenghtField(FieldInfo fieldInfo, T item)
+    {
+        var field = fieldInfo.GetCustomAttribute<CheckStringLenghtAttribute>();
+
+        if (field != null)
+        {
+            if (field.MinLenght > fieldInfo.GetValue(item).ToString().Length)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} lenght should be equal or greater then{field.MinLenght}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+            if (field.MaxLenght < fieldInfo.GetValue(item).ToString().Length)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} lenght should be equal or less then{field.MaxLenght}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
             }
         }
 
 
     }
 
-    void CheckStringEmpty(PropertyInfo property, T item)
-    {
-        var attribute = property.GetCustomAttribute<CheckStringEmptyAttribute>();
 
-        if (attribute != null)
+    #endregion
+
+    #region CheckStringEmpty
+
+    void CheckStringEmptyProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckStringEmptyAttribute>();
+
+        if (property != null)
         {
-            if (property.GetValue(item).ToString() == string.Empty)
+            if (propertyInfo.GetValue(item).ToString() == string.Empty)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} lenght should not be empty!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckName(PropertyInfo property, T item)
+    void CheckStringEmptyField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckNameAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckStringEmptyAttribute>();
 
-        if (attribute != null)
+        if (field != null)
+        {
+            if (fieldInfo.GetValue(item).ToString() == string.Empty)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} lenght should not be empty!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region CheckName
+
+    void CheckNameProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckNameAttribute>();
+
+        if (property != null)
         {
             Regex regex = new Regex(@"^[\p{L} \.'\-]+$");
-            Match match = regex.Match(property.GetValue(item).ToString());
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckEmail(PropertyInfo property, T item)
+    void CheckNameField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckEmailAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckNameAttribute>();
 
-        if (attribute != null)
+        if (field != null)
+        {
+            Regex regex = new Regex(@"^[\p{L} \.'\-]+$");
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+            if (!match.Success)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region CheckEmail
+
+    void CheckEmailProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckEmailAttribute>();
+
+        if (property != null)
         {
             Regex regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
-            Match match = regex.Match(property.GetValue(item).ToString());
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckZipCode(PropertyInfo property, T item)
+    void CheckEmailField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckZipCodeAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckEmailAttribute>();
 
-        if (attribute != null)
+        if (field != null)
+        {
+            Regex regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+            if (!match.Success)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region CheckZipCode
+
+    void CheckZipCodeProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckZipCodeAttribute>();
+
+        if (property != null)
         {
             Regex regex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
-            Match match = regex.Match(property.GetValue(item).ToString());
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckPhoneNumber(PropertyInfo property, T item)
+    void CheckZipCodeField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckPhoneAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckZipCodeAttribute>();
 
-        if (attribute != null)
+        if (field != null)
+        {
+            Regex regex = new Regex(@"^[0-9]{5}(?:-[0-9]{4})?$");
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+            if (!match.Success)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region CheckPhoneNumber
+
+    void CheckPhoneNumberProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckPhoneAttribute>();
+
+        if (property != null)
         {
             Regex regex = new Regex(@"(\+[0-9]{2}|\+[0-9]{2}\(0\)|\(\+[0-9]{2}\)\(0\)|00[0-9]{2}|0)([0-9]{9}|[0-9\-\s]{9,18})");
-            Match match = regex.Match(property.GetValue(item).ToString());
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckCreditCard(PropertyInfo property, T item)
+    void CheckPhoneNumberField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckCreditCardAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckPhoneAttribute>();
 
-        if (attribute != null)
+        if (field != null)
+        {
+            Regex regex = new Regex(@"(\+[0-9]{2}|\+[0-9]{2}\(0\)|\(\+[0-9]{2}\)\(0\)|00[0-9]{2}|0)([0-9]{9}|[0-9\-\s]{9,18})");
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+            if (!match.Success)
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region CheckCreditCard
+
+    void CheckCreditCardProperty(FieldInfo fieldInfo, T item)
+    {
+        var field = fieldInfo.GetCustomAttribute<CheckCreditCardAttribute>();
+        if (field != null)
         {
             Regex regex = null;
-            switch (attribute.CreditCard)
+
+            switch (field.CreditCard)
             {
                 case CreditCardType.Visa: regex = new Regex(@"^4[0-9]{12}(?:[0-9]{3})?$"); break;
                 case CreditCardType.Mastercard: regex = new Regex(@"^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$"); break;
                 case CreditCardType.AmericanExpress: regex = new Regex(@"^3[47][0-9]{13}$"); break;
             }
-            Match match = regex.Match(property.GetValue(item).ToString());
+
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckPassportNumber(PropertyInfo property, T item)
+    void CheckCreditCardField(PropertyInfo propertyInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckPassportAttribute>();
+        var property = propertyInfo.GetCustomAttribute<CheckCreditCardAttribute>();
 
-        if (attribute != null)
+        if (property != null)
+        {
+            Regex regex = null;
+            switch (property.CreditCard)
+            {
+                case CreditCardType.Visa: regex = new Regex(@"^4[0-9]{12}(?:[0-9]{3})?$"); break;
+                case CreditCardType.Mastercard: regex = new Regex(@"^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$"); break;
+                case CreditCardType.AmericanExpress: regex = new Regex(@"^3[47][0-9]{13}$"); break;
+            }
+
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
+
+            if (!match.Success)
+            {
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    #region CheckPassportNumber
+
+    void CheckPassportNumberProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckPassportAttribute>();
+
+        if (property != null)
         {
             Regex regex = new Regex(@"^(?!^0+$)[a-zA-Z0-9]{3,20}$");
-            Match match = regex.Match(property.GetValue(item).ToString());
+            Match match = regex.Match(propertyInfo.GetValue(item).ToString());
             if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckRange(PropertyInfo property, T item)
+    void CheckPassportNumberField(FieldInfo fieldInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckRangeAttribute>();
+        var field = fieldInfo.GetCustomAttribute<CheckPassportAttribute>();
 
-        if (attribute != null)
+        if (field != null)
         {
-            if (attribute.Min > (int)property.GetValue(item))
+            Regex regex = new Regex(@"^(?!^0+$)[a-zA-Z0-9]{3,20}$");
+            Match match = regex.Match(fieldInfo.GetValue(item).ToString());
+            if (!match.Success)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
-            }
-            if (attribute.Max < (int)property.GetValue(item))
-            {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} format is wrong!");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
             }
         }
     }
 
-    void CheckDate(PropertyInfo property, T item)
+
+    #endregion
+
+    #region CheckRange
+
+    void CheckRangeProperty(PropertyInfo propertyInfo, T item)
     {
-        var attribute = property.GetCustomAttribute<CheckDateAttribute>();
+        var property = propertyInfo.GetCustomAttribute<CheckRangeAttribute>();
 
-        if (attribute != null)
+        if (property != null)
         {
-            DateTime startDateAttribute = Convert.ToDateTime(attribute.StartDate);
-            DateTime startDateProperty = Convert.ToDateTime(property.GetValue(item).ToString());
+            if (property.Min > (int)propertyInfo.GetValue(item))
+            {
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} should be equal or greater than {property.Min}");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
 
-            DateTime endDateAttribute = Convert.ToDateTime(attribute.EndDate);
-            DateTime endDateProperty = Convert.ToDateTime(property.GetValue(item).ToString());
+                }
+            }
+            if (property.Max < (int)propertyInfo.GetValue(item))
+            {
+                if (string.IsNullOrEmpty(property.ErrorMessage))
+                {
+                    _errors.Add($"{propertyInfo.Name} should be equal or less than {property.Max}");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
+            }
+
+        }
+    }
+
+    void CheckRangeField(FieldInfo fieldInfo, T item)
+    {
+        var field = fieldInfo.GetCustomAttribute<CheckRangeAttribute>();
+
+        if (field != null)
+        {
+            if (field.Min > (int)fieldInfo.GetValue(item))
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} should be equal or greater than {field.Min}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+
+                }
+            }
+            if (field.Max < (int)fieldInfo.GetValue(item))
+            {
+                if (string.IsNullOrEmpty(field.ErrorMessage))
+                {
+                    _errors.Add($"{fieldInfo.Name} should be equal or less than {field.Max}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+
+        }
+    }
+
+
+    #endregion
+
+    #region CheckDate
+
+    void CheckDateProperty(PropertyInfo propertyInfo, T item)
+    {
+        var property = propertyInfo.GetCustomAttribute<CheckDateAttribute>();
+
+        if (property != null)
+        {
+            DateTime startDateAttribute = Convert.ToDateTime(property.StartDate);
+            DateTime startDateProperty = Convert.ToDateTime(propertyInfo.GetValue(item).ToString());
+
+            DateTime endDateAttribute = Convert.ToDateTime(property.EndDate);
+            DateTime endDateProperty = Convert.ToDateTime(propertyInfo.GetValue(item).ToString());
 
 
             if (startDateProperty < startDateAttribute)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (property.ErrorMessage == null)
+                {
+                    _errors.Add($"{propertyInfo.Name} should be equal or greater than {property.StartDate}!");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
             if (endDateProperty > endDateAttribute)
             {
-                _errors.Add($"{property.Name} {attribute.ErrorMessage}");
+                if (property.ErrorMessage == null)
+                {
+                    _errors.Add($"{propertyInfo.Name} should be equal or less than {property.EndDate}");
+                }
+                else
+                {
+                    _errors.Add($"{propertyInfo.Name} {property.ErrorMessage}");
+                }
             }
         }
     }
 
+    void CheckDateField(FieldInfo fieldInfo, T item)
+    {
+        var field = fieldInfo.GetCustomAttribute<CheckDateAttribute>();
+
+        if (field != null)
+        {
+            DateTime startDateAttribute = Convert.ToDateTime(field.StartDate);
+            DateTime startDateProperty = Convert.ToDateTime(fieldInfo.GetValue(item).ToString());
+
+            DateTime endDateAttribute = Convert.ToDateTime(field.EndDate);
+            DateTime endDateProperty = Convert.ToDateTime(fieldInfo.GetValue(item).ToString());
+
+
+            if (startDateProperty < startDateAttribute)
+            {
+                if (field.ErrorMessage == null)
+                {
+                    _errors.Add($"{fieldInfo.Name} should be equal or greater than {field.StartDate}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+            if (endDateProperty > endDateAttribute)
+            {
+                if (field.ErrorMessage == null)
+                {
+                    _errors.Add($"{fieldInfo.Name} should be equal or less than {field.EndDate}");
+                }
+                else
+                {
+                    _errors.Add($"{fieldInfo.Name} {field.ErrorMessage}");
+                }
+            }
+        }
+    }
+
+    #endregion
 
 
 }

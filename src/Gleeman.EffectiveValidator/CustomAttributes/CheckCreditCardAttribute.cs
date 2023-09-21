@@ -7,4 +7,9 @@ public class CheckCreditCardAttribute : AbstractAttribute<CheckCreditCardAttribu
     {
         CreditCard = creditCard;
     }
+
+    public CheckCreditCardAttribute(CreditCardType creditCard)
+    {
+        CreditCard = creditCard;
+    }
 }

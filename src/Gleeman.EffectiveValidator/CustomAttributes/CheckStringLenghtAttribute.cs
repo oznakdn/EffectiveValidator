@@ -10,4 +10,10 @@ public class CheckStringLenghtAttribute : AbstractAttribute<CheckStringLenghtAtt
         MinLenght = minLenght;
         MaxLenght = maxLenght;
     }
+
+    public CheckStringLenghtAttribute(int minLenght, int maxLenght)
+    {
+        MinLenght = minLenght;
+        MaxLenght = maxLenght;
+    }
 }

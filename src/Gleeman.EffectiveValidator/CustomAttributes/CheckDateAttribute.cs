@@ -9,4 +9,10 @@ public class CheckDateAttribute : AbstractAttribute<CheckDateAttribute>
         StartDate = startDate;
         EndDate = endDate;
     }
+
+    public CheckDateAttribute(string startDate, string endDate)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+    }
 }

@@ -10,4 +10,10 @@ public class CheckRangeAttribute : AbstractAttribute<CheckRangeAttribute>
         Min = min;
         Max = max;
     }
+
+    public CheckRangeAttribute(int min, int max)
+    {
+        Min = min;
+        Max = max;
+    }
 }

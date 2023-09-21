@@ -5,4 +5,8 @@ public class CheckPassportAttribute : AbstractAttribute<CheckPassportAttribute>
     public CheckPassportAttribute(string errorMessage) : base(errorMessage)
     {
     }
+
+    public CheckPassportAttribute()
+    {
+    }
 }

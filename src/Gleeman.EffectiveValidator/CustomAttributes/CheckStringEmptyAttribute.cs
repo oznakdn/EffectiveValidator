@@ -7,4 +7,9 @@ public class CheckStringEmptyAttribute : AbstractAttribute<CheckStringEmptyAttri
     {
 
     }
+
+    public CheckStringEmptyAttribute()
+    {
+
+    }
 }
