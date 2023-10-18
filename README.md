@@ -22,44 +22,44 @@
 ```
 ##### Email Validation
 ```csharp
- [CheckEmail]
+[CheckEmail]
 ```
 ##### Name Validation
 ```csharp
-  [CheckName]
+[CheckName]
 ```
 ##### Passport Validation
 ```csharp
-   [CheckPassport]
+[CheckPassport]
 ```
 ##### Phone Validation
 ```csharp
-    [CheckPhone]
+[CheckPhone]
 ```
 ##### Number Range Validation
 ```csharp
-     [CheckRange(int min, int max)]
+[CheckRange(int min, int max)]
 ```
 ##### Required Validation
 ```csharp
-    [CheckRequired]
+[CheckRequired]
 ```
 ##### String Empty Validation
 ```csharp
-     [CheckStringEmpty]
+[CheckStringEmpty]
 ```
 ##### String Lenght Validation
 ```csharp
-     [CheckStringLenght(int minLenght, int maxLenght)]
+[CheckStringLenght(int minLenght, int maxLenght)]
 ```
 ##### Zip Code Validation
 ```csharp
-     [CheckZipCode]
+[CheckZipCode]
 ```
 
-### How To Use?
-```csharp
+## USAGE
 
+```csharp
 public record CreatePersonDto
 {
     [CheckName("is invalid!")]
